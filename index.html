@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-50 dark:bg-zinc-950"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+    <script>tailwind = { config: { darkMode: 'media' } };</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ImproCards</title>
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(150,150,150,0.4);
+  border-radius: 10px;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(150,150,150,0.4) transparent;
+}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .card-enter { animation: slideUp 0.2s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .prevent-select { -webkit-user-select: none; user-select: none; }
+        
+        #tools-drawer { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s; }
+        .drawer-hidden { transform: translateY(20px) scale(0.95); opacity: 0; pointer-events: none; }
+        .drawer-visible { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+
+        #context-menu { position: fixed; z-index: 10000; min-width: 160px; }
+        
+        #sidebar { transition: transform 0.3s ease-in-out; z-index: 300; }
+        #sidebar-overlay { transition: opacity 0.3s ease-in-out; z-index: 299; }
+
+        /* Estilos personalizados para el slider de Mejora */
+        input[type=range].mejora-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range].mejora-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #2563eb; /* text-blue-600 */
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input[type=range].mejora-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        .dark input[type=range].mejora-slider::-webkit-slider-runnable-track {
+            background: #3f3f46;
+        }
+
+        /* Estilos para el despliegue de niveles */
+        .card-levels { display: none; }
+        .card-levels.show { display: block; }
+#levels-modal {
+    touch-action: none;
+}
+[id^="levels-modal"] {
+    touch-action: none;
+}
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-0{bottom:0px}.bottom-10{bottom:2.5rem}.bottom-20{bottom:5rem}.left-0{left:0px}.left-6{left:1.5rem}.right-0{right:0px}.right-4{right:1rem}.right-6{right:1.5rem}.top-0{top:0px}.top-6{top:1.5rem}.right-3{right:0.75rem}.top-2{top:0.5rem}.z-50{z-index:50}.z-\[10000\]{z-index:10000}.z-\[100\]{z-index:100}.z-\[150\]{z-index:150}.mx-auto{margin-left:auto;margin-right:auto}.my-1{margin-top:0.25rem;margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mt-4{margin-top:1rem}.flex{display:flex}.hidden{display:none}.h-10{height:2.5rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-40{height:10rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-full{height:100%}.h-px{height:1px}.h-screen{height:100vh}.h-2{height:0.5rem}.max-h-\[85vh\]{max-height:85vh}.max-h-\[90vh\]{max-height:90vh}.min-h-\[250px\]{min-height:250px}.min-h-\[300px\]{min-height:300px}.w-10{width:2.5rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-20{width:5rem}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-\[90\%\]{width:90%}.max-w-\[90vw\]{max-width:90vw}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-full{--tw-translate-x:-100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.appearance-none{-webkit-appearance:none;appearance:none}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.whitespace-pre-wrap{white-space:pre-wrap}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-blue-500{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-black\/60{background-color:rgb(0 0 0 / 0.6)}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-orange-600{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/80{background-color:rgb(255 255 255 / 0.8)}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.bg-blue-200\/50{background-color:rgb(191 219 254 / 0.5)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.p-5{padding:1.25rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:0.5rem}.pb-48{padding-bottom:12rem}.pt-12{padding-top:3rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-5xl{font-size:3rem;line-height:1}.text-6xl{font-size:3.75rem;line-height:1}.text-\[10px\]{font-size:10px}.text-\[8px\]{font-size:8px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-base{font-size:1rem;line-height:1.5rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-widest{letter-spacing:0.1em}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-50{opacity:0.5}.opacity-60{opacity:0.6}.opacity-70{opacity:0.7}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.backdrop-blur-lg{--tw-backdrop-blur:blur(16px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-200{transition-duration:200ms}.hover\:border-slate-300:hover{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.hover\:bg-red-50:hover{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:opacity-30:disabled{opacity:0.3}.group:hover .group-hover\:opacity-100{opacity:1}@media (prefers-color-scheme: dark){.dark\:border-zinc-700{--tw-border-opacity:1;border-color:rgb(63 63 70 / var(--tw-border-opacity, 1))}.dark\:border-zinc-800{--tw-border-opacity:1;border-color:rgb(39 39 42 / var(--tw-border-opacity, 1))}.dark\:bg-blue-900\/20{background-color:rgb(30 58 138 / 0.2)}.dark\:bg-emerald-900\/30{background-color:rgb(6 78 59 / 0.3)}.dark\:bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.dark\:bg-zinc-800{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.dark\:bg-zinc-800\/50{background-color:rgb(39 39 42 / 0.5)}.dark\:bg-zinc-900{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.dark\:bg-zinc-900\/80{background-color:rgb(24 24 27 / 0.8)}.dark\:bg-zinc-900\/95{background-color:rgb(24 24 27 / 0.95)}.dark\:bg-zinc-950{--tw-bg-opacity:1;background-color:rgb(9 9 11 / var(--tw-bg-opacity, 1))}.dark\:bg-blue-900\/50{background-color:rgb(30 58 138 / 0.5)}.dark\:text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.dark\:text-zinc-100{--tw-text-opacity:1;color:rgb(244 244 245 / var(--tw-text-opacity, 1))}.dark\:text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.dark\:text-zinc-900{--tw-text-opacity:1;color:rgb(24 24 27 / var(--tw-text-opacity, 1))}.dark\:text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.dark\:text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.dark\:hover\:border-zinc-600:hover{--tw-border-opacity:1;border-color:rgb(82 82 91 / var(--tw-border-opacity, 1))}.dark\:hover\:bg-zinc-700:hover{--tw-bg-opacity:1;background-color:rgb(63 63 70 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-zinc-800:hover{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}}</style></head>
+<body class="bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 overflow-hidden prevent-select">
+
+
+    <div id="app" class="flex flex-col h-screen relative">
+        <!-- Sidebar and Overlay -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 opacity-0 pointer-events-none"></div>
+        <div id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-white dark:bg-zinc-900 shadow-2xl -translate-x-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-xl font-black text-blue-600 tracking-tighter">MUSIC JIT</h2>
+                    <button onclick="toggleSidebar()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-6 h-6"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                </div>
+                <nav class="space-y-4">
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest px-4">Entrenamiento</p>
+                    <a href="file:///C:/Users/Ernes/Documents/MTE/PIA%202/App/P9/11.3.html#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-bold text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layout-dashboard" aria-hidden="true" class="lucide lucide-layout-dashboard w-5 h-5"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg> Dashboard Principal
+                    </a>
+                </nav>
+            </div>
+            <div class="absolute bottom-10 left-6 text-xs text-slate-400 font-bold uppercase tracking-widest">
+                Tools Expansion v1.3 + Levels
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="pt-12 pb-2 px-6 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 shrink-0">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center gap-4">
+                    <!-- Menú hamburguesa eliminado a petición -->
+                    <h1 id="view-title" class="text-xl font-bold tracking-tight">Frases y patrones</h1>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="undo()" id="btn-undo" class="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-400 disabled:opacity-30"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="undo-2" aria-hidden="true" class="lucide lucide-undo-2 w-4 h-4"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg></button>
+                    <button onclick="redo()" id="btn-redo" class="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-400 disabled:opacity-30" disabled=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="redo-2" aria-hidden="true" class="lucide lucide-redo-2 w-4 h-4"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"></path></svg></button>
+                    <button onclick="openFolderModal()" class="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="folder-plus" aria-hidden="true" class="lucide lucide-folder-plus w-5 h-5"><path d="M12 10v6"></path><path d="M9 13h6"></path><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg></button>
+                    <button onclick="openCardModal()" class="p-2 rounded-full bg-blue-600 text-white shadow-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" aria-hidden="true" class="lucide lucide-plus w-5 h-5"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
+                </div>
+            </div>
+            <div id="breadcrumb" class="text-xs text-blue-600 font-bold uppercase mt-1 flex items-center gap-1 cursor-pointer hidden" onclick="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" aria-hidden="true" class="lucide lucide-chevron-left w-3 h-3"><path d="m15 18-6-6 6-6"></path></svg> <span>Volver</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="card-container" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar pb-48 relative min-h-[300px]"><div class="card-enter bg-white dark:bg-zinc-900 rounded-2xl p-5 shadow-sm border relative border-slate-200 dark:border-zinc-800" data-id="card-1775621826269">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-base leading-tight">s</h3>
+                                <div onclick="handleThreeDots(event, 'card-1775621826269')" class="text-slate-300 p-2 edit-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="more-vertical" aria-hidden="true" class="lucide lucide-more-vertical w-5 h-5"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></div>
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-zinc-400 whitespace-pre-wrap mb-4">s</p>
+                            
+                            <div class="pt-4 border-t border-slate-100 dark:border-zinc-800">
+                                <!-- BARRA DE PROGRESO GENERAL (Botón que abre el modal) -->
+                                <div class="cursor-pointer group levels-trigger" onclick="event.stopPropagation(); toggleLevelsModal('card-1775621826269')">
+                                    <div class="flex justify-between items-end mb-1">
+                                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Progreso General</h4>
+                                        <span class="text-sm font-black text-blue-600">0%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden mb-2">
+                                        <div class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-500 font-bold uppercase text-center opacity-60 group-hover:opacity-100 transition-opacity">Toca para gestionar niveles</p>
+                                </div>
+                            </div>
+
+   <!-- MODAL DE NIVELES (POPUP COMPLETO CON BLUR Y Z-INDEX SEGURO) -->
+<div id="levels-modal-card-1775621826269" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden items-center justify-center p-6" onclick="toggleLevelsModal('card-1775621826269')" ontouchstart="event.stopPropagation()" oncontextmenu="event.stopPropagation()">
+
+<div class="modal-content bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl flex flex-col relative max-h-[90vh] overflow-hidden" onclick="event.stopPropagation()">
+
+<button onclick="toggleLevelsModal('card-1775621826269')" class="absolute top-2 right-3 text-2xl font-bold text-gray-500 z-[100001]">
+    ×
+</button>
+<!-- Header del Modal -->
+                                    <div class="p-6 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center shrink-0">
+                                        <div>
+                                            <h3 class="font-black text-lg text-blue-600 leading-tight">Niveles de Progreso</h3>
+                                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">s</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contenido Escroleable -->
+                                    <div class="p-6 overflow-y-auto flex-1">
+                                        
+                                        <!-- Progreso General en el Modal -->
+                                        <div class="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl">
+                                            <div class="flex justify-between items-end mb-2">
+                                                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Progreso Global Evaluado</h4>
+                                                <span class="text-xl font-black text-blue-600">0%</span>
+                                            </div>
+                                            <div class="w-full bg-blue-200/50 dark:bg-blue-900/50 h-2 rounded-full overflow-hidden">
+                                                <div class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+
+                                        
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('card-1775621826269', 'analisis')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">Análisis (3 Puntos)</h4>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" id="icon-analisis-card-1775621826269" class="lucide lucide-chevron-down w-4 h-4 transition-transform duration-200 text-slate-400" style=""><path d="m6 9 6 6 6-6"></path></svg>
+                                    </div>
+                                    <div id="sec-analisis-card-1775621826269" class="p-3 flex flex-col gap-2 hidden">
+                                        
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'analisis', 'teorico')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Análisis teórico</div>
+                                        
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'analisis', 'tecnico')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Análisis técnico</div>
+                                        
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'analisis', 'emocional')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Análisis emocional</div>
+                                        
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                        
+                                    </div>
+                                </div>
+                            
+
+                                        
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('card-1775621826269', 'mejora')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">Ajustar Mejora (Velocidad)</h4>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" id="icon-mejora-card-1775621826269" class="lucide lucide-chevron-down w-4 h-4 transition-transform duration-200 text-slate-400" style=""><path d="m6 9 6 6 6-6"></path></svg>
+                                    </div>
+                                    <div id="sec-mejora-card-1775621826269" class="p-3 flex flex-col gap-2 hidden">
+                                        
+                                            <div class="flex justify-between items-end mb-1 mt-2">
+                                                <span class="text-xs text-slate-500 font-bold uppercase tracking-widest">Un intento sin errores</span>
+                                                <span id="slider-val-modal-card-1775621826269" class="text-sm font-black text-blue-600">0%</span>
+                                            </div>
+                                            <input type="range" min="0" max="100" value="0" oninput="updateCardSlider('card-1775621826269', this.value); document.getElementById('slider-val-modal-card-1775621826269').innerText=this.value+'%';" onchange="saveCardSlider()" onclick="event.stopPropagation()" class="mejora-slider mt-4 mb-2">
+                                        
+                                    </div>
+                                </div>
+                            
+
+                                        
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('card-1775621826269', 'consistencia')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">Consistencia (2 Puntos)</h4>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" id="icon-consistencia-card-1775621826269" class="lucide lucide-chevron-down w-4 h-4 transition-transform duration-200 text-slate-400" style=""><path d="m6 9 6 6 6-6"></path></svg>
+                                    </div>
+                                    <div id="sec-consistencia-card-1775621826269" class="p-3 flex flex-col gap-2 hidden">
+                                        
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'consistencia', 'c0')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Consistencia 0</div>
+                                        <div class="text-xs opacity-70 mt-0.5">En el mismo día de la sesión de práctica</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'consistencia', 'c1')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Consistencia 1</div>
+                                        <div class="text-xs opacity-70 mt-0.5">A la primera luego de pasado al menos un día</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                        
+                                    </div>
+                                </div>
+                            
+
+                                        
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('card-1775621826269', 'automatismo')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">Automatismo (2 Puntos)</h4>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" id="icon-automatismo-card-1775621826269" class="lucide lucide-chevron-down w-4 h-4 transition-transform duration-200 text-slate-400" style=""><path d="m6 9 6 6 6-6"></path></svg>
+                                    </div>
+                                    <div id="sec-automatismo-card-1775621826269" class="p-3 flex flex-col gap-2 hidden">
+                                        
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'automatismo', 'a0')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Automatismo 0</div>
+                                        <div class="text-xs opacity-70 mt-0.5">En el mismo día de la sesión de práctica</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'automatismo', 'a1')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Automatismo 1</div>
+                                        <div class="text-xs opacity-70 mt-0.5">A la primera luego de pasado al menos un día</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                        
+                                    </div>
+                                </div>
+                            
+
+                                        
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('card-1775621826269', 'transferencia')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">Transferencia y Estabilidad (2 Puntos)</h4>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-down" aria-hidden="true" id="icon-transferencia-card-1775621826269" class="lucide lucide-chevron-down w-4 h-4 transition-transform duration-200 text-slate-400" style=""><path d="m6 9 6 6 6-6"></path></svg>
+                                    </div>
+                                    <div id="sec-transferencia-card-1775621826269" class="p-3 flex flex-col gap-2 hidden">
+                                        
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'transferencia', 't0')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Transferencia 0</div>
+                                        <div class="text-xs opacity-70 mt-0.5">En el mismo día de la sesión de práctica</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                            
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('card-1775621826269', 'transferencia', 't1')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">Transferencia 1+</div>
+                                        <div class="text-xs opacity-70 mt-0.5">A la primera. El número de días puede aumentar</div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="circle" aria-hidden="true" class="lucide lucide-circle w-4 h-4 shrink-0"><circle cx="12" cy="12" r="10"></circle></svg>
+                                </button>
+                            
+                                        
+                                    </div>
+                                </div>
+                            
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div><div class="h-48 w-full shrink-0 paste-zone"></div></main>
+
+        <!-- Tools Hub -->
+        <div class="fixed bottom-20 right-4 z-[100] flex flex-col items-end gap-3">
+            <div id="tools-drawer" class="drawer-hidden flex items-center gap-3 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-slate-200 dark:border-zinc-800 p-2 rounded-2xl shadow-2xl mb-2 overflow-x-auto no-scrollbar max-w-[90vw]">
+                <button id="drawer-btn-metro" onclick="openMetroDetail()" class="shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="music-2" aria-hidden="true" class="lucide lucide-music-2 w-5 h-5"><circle cx="8" cy="18" r="4"></circle><path d="M12 18V2l7 4"></path></svg>
+                    <span class="text-xs font-bold mt-0.5 uppercase">Metro</span>
+                </button>
+                <div class="shrink-0 w-px h-8 bg-slate-200 dark:bg-zinc-800"></div>
+                <button id="drawer-btn-timer" onclick="openTimerDetail()" class="shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="timer" aria-hidden="true" class="lucide lucide-timer w-5 h-5"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>
+                    <span class="text-xs font-bold mt-0.5 uppercase">Temp</span>
+                </button>
+                <div class="shrink-0 w-px h-8 bg-slate-200 dark:bg-zinc-800"></div>
+                <button id="drawer-btn-stopwatch" onclick="openStopwatchDetail()" class="shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-400">
+                    <i data-lucide="timer" class="w-5 h-5"></i>
+                    <span class="text-xs font-bold mt-0.5 uppercase">Crono</span>
+                </button>
+                <div class="shrink-0 w-px h-8 bg-slate-200 dark:bg-zinc-800"></div>
+                <button id="drawer-btn-notes" onclick="openNotesDetail()" class="shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sticky-note" aria-hidden="true" class="lucide lucide-sticky-note w-5 h-5"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"></path><path d="M15 3v5a1 1 0 0 0 1 1h5"></path></svg>
+                    <span class="text-xs font-bold mt-0.5 uppercase">Notas</span>
+                </button>
+                <div class="shrink-0 w-px h-8 bg-slate-200 dark:bg-zinc-800"></div>
+                <button id="drawer-btn-dual" onclick="openDualTaskDetail()" class="shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="brain-circuit" aria-hidden="true" class="lucide lucide-brain-circuit w-5 h-5"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M9 13a4.5 4.5 0 0 0 3-4"></path><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path><path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path><path d="M6 18a4 4 0 0 1-1.967-.516"></path><path d="M12 13h4"></path><path d="M12 18h6a2 2 0 0 1 2 2v1"></path><path d="M12 8h8"></path><path d="M16 8V5a2 2 0 0 1 2-2"></path><circle cx="16" cy="13" r=".5"></circle><circle cx="18" cy="3" r=".5"></circle><circle cx="20" cy="21" r=".5"></circle><circle cx="20" cy="8" r=".5"></circle></svg>
+                    <span class="text-xs font-bold mt-0.5 uppercase">Dual</span>
+                </button>
+            </div>
+
+            <button id="hub-toggle" onclick="toggleToolsDrawer()" class="w-14 h-14 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="wrench" aria-hidden="true" class="lucide lucide-wrench w-6 h-6 text-slate-500 dark:text-zinc-400"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"></path></svg>
+            </button>
+        </div>
+
+        <!-- Metrónomo Modal -->
+        <div id="metro-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl relative">
+                <button onclick="closeMetroDetail()" class="absolute top-6 right-6 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                <h3 class="text-xl font-bold mb-8 text-blue-600 text-center">Metrónomo</h3>
+                <div class="flex justify-center mb-8">
+                    <button id="metro-toggle" onclick="toggleMetronome()" class="w-20 h-20 rounded-full bg-slate-100 dark:bg-zinc-800 text-blue-600 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="play" aria-hidden="true" id="metro-icon" class="lucide lucide-play w-10 h-10 ml-1"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="changeBPM(-1)" class="p-3 bg-slate-100 dark:bg-zinc-800 rounded-xl font-bold">-</button>
+                    <div class="flex-1 text-center">
+                        <span id="detail-bpm" class="text-5xl font-black">120</span>
+                        <input type="range" id="bpm-slider" min="30" max="300" value="120" oninput="setBPM(this.value)" class="w-full mt-6">
+                    </div>
+                    <button onclick="changeBPM(1)" class="p-3 bg-slate-100 dark:bg-zinc-800 rounded-xl font-bold">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temporizador Modal -->
+        <div id="timer-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl relative">
+                <button onclick="closeTimerDetail()" class="absolute top-6 right-6 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                <h3 class="text-xl font-bold mb-8 text-blue-600 text-center uppercase tracking-widest text-sm">Temporizador</h3>
+                <div class="text-center py-4"><span id="detail-timer-clock" class="text-6xl font-black font-mono">00:00</span></div>
+                <div id="alarm-banner" class="hidden bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 p-3 rounded-xl text-center text-sm font-bold animate-pulse mb-4">¡Tiempo!</div>
+                <div class="flex flex-col gap-4">
+                    <select id="timer-select" class="w-full bg-slate-100 dark:bg-zinc-800 p-4 rounded-xl font-bold appearance-none text-center">
+                        <option value="1">1 min</option>
+                        <option value="5">5 min</option>
+                        <option value="10">10 min</option>
+                        <option value="15">15 min</option>
+                        <option value="25">25 min</option>
+                    </select>
+                    <button id="timer-btn" onclick="toggleTimer()" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-lg">Iniciar</button>
+                    <button id="stop-alarm-btn" onclick="stopAlarm()" class="hidden w-full py-5 bg-emerald-600 text-white rounded-2xl font-bold text-lg shadow-lg">Entendido</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cronómetro Modal -->
+        <div id="stopwatch-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl relative">
+                <button onclick="closeStopwatchDetail()" class="absolute top-6 right-6 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                <h3 class="text-xl font-bold mb-8 text-orange-600 text-center uppercase tracking-widest text-sm">Cronómetro</h3>
+                <div class="text-center py-8"><span id="sw-display" class="text-6xl font-black font-mono">00:00.00</span></div>
+                <div class="flex flex-col gap-4">
+                    <button id="sw-btn-toggle" onclick="toggleStopwatch()" class="w-full py-5 bg-orange-600 text-white rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="play" aria-hidden="true" id="sw-toggle-icon" class="lucide lucide-play w-5 h-5"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+                        <span>Iniciar</span>
+                    </button>
+                    <button onclick="resetStopwatch()" class="w-full py-4 border-2 border-slate-100 dark:border-zinc-800 rounded-2xl font-bold text-slate-400">Reiniciar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notas Modal -->
+        <div id="notes-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl p-8 shadow-2xl relative flex flex-col max-h-[85vh]">
+                <button onclick="closeNotesDetail()" class="absolute top-6 right-6 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x w-5 h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sticky-note" aria-hidden="true" class="lucide lucide-sticky-note w-5 h-5"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"></path><path d="M15 3v5a1 1 0 0 0 1 1h5"></path></svg> Libreta de Notas</h3>
+                </div>
+
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex-1 flex items-center gap-3 bg-slate-100 dark:bg-zinc-800 px-4 py-2 rounded-2xl">
+                        <button onclick="changeNotePage(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-lg transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" aria-hidden="true" class="lucide lucide-chevron-left w-5 h-5"><path d="m15 18-6-6 6-6"></path></svg></button>
+                        <span id="note-page-indicator" class="flex-1 text-xs font-black text-slate-600 dark:text-zinc-400 text-center uppercase tracking-widest">Pág 1/1</span>
+                        <button onclick="changeNotePage(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-lg transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-right" aria-hidden="true" class="lucide lucide-chevron-right w-5 h-5"><path d="m9 18 6-6-6-6"></path></svg></button>
+                    </div>
+                    <button onclick="addNewNotePage()" class="w-12 h-12 bg-blue-600 text-white rounded-2xl shadow-lg flex items-center justify-center active:scale-95 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="plus" aria-hidden="true" class="lucide lucide-plus w-6 h-6"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
+                    <button id="delete-page-btn" onclick="deleteCurrentNotePage()" class="w-12 h-12 bg-slate-100 dark:bg-zinc-800 text-slate-400 rounded-2xl flex items-center justify-center hover:text-red-500 transition-colors hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-5 h-5"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                </div>
+
+                <textarea id="notes-content" oninput="saveNotes()" placeholder="Escribe tus ideas en esta página..." class="flex-1 w-full bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-800 p-6 rounded-2xl outline-none resize-none text-sm leading-relaxed mb-4 min-h-[250px] shadow-inner"></textarea>
+                <div class="text-xs text-slate-400 font-bold uppercase text-center tracking-widest opacity-50">Sincronizado localmente</div>
+            </div>
+        </div>
+
+        <!-- Dual Task Modal -->
+        <div id="dual-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl relative">
+                <button onclick="closeDualTaskDetail()" class="absolute top-6 right-6 text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+                <h3 class="text-xl font-bold mb-6 text-indigo-600 text-center flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="brain-circuit" aria-hidden="true" class="lucide lucide-brain-circuit w-5 h-5"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M9 13a4.5 4.5 0 0 0 3-4"></path><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"></path><path d="M3.477 10.896a4 4 0 0 1 .585-.396"></path><path d="M6 18a4 4 0 0 1-1.967-.516"></path><path d="M12 13h4"></path><path d="M12 18h6a2 2 0 0 1 2 2v1"></path><path d="M12 8h8"></path><path d="M16 8V5a2 2 0 0 1 2-2"></path><circle cx="16" cy="13" r=".5"></circle><circle cx="18" cy="3" r=".5"></circle><circle cx="20" cy="21" r=".5"></circle><circle cx="20" cy="8" r=".5"></circle></svg> Random Beep Test
+                </h3>
+                <div id="dual-setup" class="space-y-6">
+                    <div>
+                        <div class="flex justify-between items-end">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Duración Sesión</label>
+                            <span id="dual-time-display" class="text-xl font-black text-indigo-600">60s</span>
+                        </div>
+                        <input type="range" id="dual-time-slider" min="15" max="300" step="15" value="60" oninput="updateDualTimeDisplay(this.value)" class="w-full mt-2">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-end">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Máximo de Beeps</label>
+                            <span id="dual-beep-val" class="text-xl font-black text-indigo-600">10</span>
+                        </div>
+                        <input type="range" id="dual-beeps-max" min="1" max="25" value="10" oninput="document.getElementById(&#39;dual-beep-val&#39;).innerText=this.value" class="w-full mt-2">
+                    </div>
+                    <button onclick="startDualTask()" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-lg">Comenzar</button>
+                </div>
+                <div id="dual-active" class="hidden text-center space-y-6">
+                    <div class="py-4"><span id="dual-clock" class="text-6xl font-black font-mono">00:00</span></div>
+                    <p class="text-slate-400 text-sm italic">Escucha con atención...</p>
+                    <button onclick="stopDualTask()" class="w-full py-4 border-2 border-slate-100 dark:border-zinc-800 rounded-2xl font-bold text-slate-400">Cancelar</button>
+                </div>
+                <div id="dual-result" class="hidden text-center space-y-6">
+                    <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="check" aria-hidden="true" class="lucide lucide-check w-8 h-8"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                    <h4 class="text-xl font-bold">Sesión Finalizada</h4>
+                    <div id="dual-reveal-box" class="py-6 bg-slate-50 dark:bg-zinc-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-zinc-700">
+                        <button id="reveal-btn" onclick="revealDualAnswer()" class="px-6 py-3 bg-indigo-600 text-white rounded-full font-bold text-sm shadow-md">Revelar Conteo Real</button>
+                        <div id="actual-beeps" class="hidden">
+                            <p class="text-slate-400 text-xs uppercase font-bold tracking-widest">Beeps Tocados</p>
+                            <p id="actual-count-val" class="text-6xl font-black text-indigo-600">0</p>
+                        </div>
+                    </div>
+                    <button onclick="resetDualTask()" class="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-bold">Reiniciar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Context Menu -->
+        <div id="context-menu" class="hidden bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-1 overflow-hidden z-[10000]">
+            <div id="ctx-item-actions">
+                <button id="ctx-btn-edit" onclick="handleCtx('edit')" class="w-full text-left px-4 py-3 text-sm font-bold flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="pencil" aria-hidden="true" class="lucide lucide-pencil w-4 h-4"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg> Editar</button>
+                <button onclick="handleCtx('copy')" class="w-full text-left px-4 py-3 text-sm font-bold flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="copy" aria-hidden="true" class="lucide lucide-copy w-4 h-4"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg> Copiar</button>
+                <button onclick="handleCtx('cut')" class="w-full text-left px-4 py-3 text-sm font-bold flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors text-orange-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="scissors" aria-hidden="true" class="lucide lucide-scissors w-4 h-4"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" x2="8.12" y1="4" y2="13.88"></line><line x1="14.47" x2="14.44" y1="14.48" y2="14.45"></line><line x1="20" x2="8.12" y1="20" y2="10.12"></line></svg> Cortar</button>
+                <div class="h-px bg-slate-100 dark:bg-zinc-800 my-1"></div>
+                <button onclick="handleCtx('delete')" class="w-full text-left px-4 py-3 text-sm font-bold flex items-center gap-3 hover:bg-red-50 text-red-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trash-2" aria-hidden="true" class="lucide lucide-trash-2 w-4 h-4"><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Eliminar</button>
+            </div>
+            <div id="ctx-empty-actions" class="hidden">
+                <button onclick="pasteItem(); hideContextMenu();" class="w-full text-left px-4 py-3 text-sm font-bold flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="clipboard-paste" aria-hidden="true" class="lucide lucide-clipboard-paste w-4 h-4"><path d="M15 2H9a1 1 0 0 0-1 1v2c0 .6.4 1 1 1h6c.6 0 1-.4 1-1V3a1 1 0 0 0-1-1Z"></path><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M16 4h2a2 2 0 0 1 2 2v2M11 14h10"></path><path d="m17 10 4 4-4 4"></path></svg> Pegar aquí</button>
+            </div>
+        </div>
+
+        <!-- CRUD Modals -->
+        <div id="card-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] hidden items-center justify-center p-6">
+            <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+                <h2 id="card-modal-title" class="text-xl font-bold mb-4">Nueva Card</h2>
+                <form id="card-form" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <input type="text" id="form-title" placeholder="Título" required="" class="w-full bg-slate-100 dark:bg-zinc-800 p-4 rounded-xl outline-none font-bold">
+                    <textarea id="form-desc" placeholder="Descripción" class="w-full bg-slate-100 dark:bg-zinc-800 p-4 rounded-xl outline-none h-40"></textarea>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeCardModal()" class="flex-1 py-3 font-bold text-slate-400">Cancelar</button>
+                        <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="folder-modal" onclick="handleFolderOverlayClick(event)" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] hidden items-center justify-center p-6">
+            <div id="folder-modal-content" class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-3xl p-8 shadow-2xl">
+                <h2 id="folder-modal-title" class="text-xl font-bold mb-4">Nueva Carpeta</h2>
+                <input type="text" id="folder-name" placeholder="Nombre" class="w-full bg-slate-100 dark:bg-zinc-800 p-4 rounded-xl mb-4 outline-none">
+                <div class="flex gap-2">
+                    <button onclick="closeFolderModal()" class="flex-1 py-3 font-bold text-slate-400">Cancelar</button>
+                    <button id="folder-save-btn" onclick="createFolder()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Crear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Nav -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border-t border-slate-200 dark:border-zinc-800 safe-area-bottom z-50 h-16 flex justify-around items-center">
+            <button onclick="switchTab(&#39;Frases y patrones&#39;)" class="nav-item flex flex-col items-center gap-1 transition-all text-blue-600 font-bold" data-tab="Frases y patrones"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="music" aria-hidden="true" class="lucide lucide-music w-6 h-6"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg><span class="text-xs font-medium uppercase">Frases</span></button>
+            <button onclick="switchTab(&#39;Cadenas&#39;)" class="nav-item flex flex-col items-center gap-1 transition-all text-slate-400" data-tab="Cadenas"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" aria-hidden="true" class="lucide lucide-layers w-6 h-6"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg><span class="text-xs font-medium uppercase">Cadenas</span></button>
+            <button onclick="switchTab(&#39;Conceptos&#39;)" class="nav-item flex flex-col items-center gap-1 transition-all text-slate-400" data-tab="Conceptos"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="brain" aria-hidden="true" class="lucide lucide-brain w-6 h-6"><path d="M12 18V5"></path><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"></path><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"></path><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"></path><path d="M18 18a4 4 0 0 0 2-7.464"></path><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"></path><path d="M6 18a4 4 0 0 1-2-7.464"></path><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"></path></svg><span class="text-xs font-medium uppercase">Conceptos</span></button>
+            <button onclick="switchTab(&#39;Canciones&#39;)" class="nav-item flex flex-col items-center gap-1 transition-all text-slate-400" data-tab="Canciones"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mic-2" aria-hidden="true" class="lucide lucide-mic-2 w-6 h-6"><path d="m11 7.601-5.994 8.19a1 1 0 0 0 .1 1.298l.817.818a1 1 0 0 0 1.314.087L15.09 12"></path><path d="M16.5 21.174C15.5 20.5 14.372 20 13 20c-2.058 0-3.928 2.356-6 2-2.072-.356-2.775-3.369-1.5-4.5"></path><circle cx="16" cy="7" r="5"></circle></svg><span class="text-xs font-medium uppercase">Canciones</span></button>
+        </nav>
+    </div>
+
+    <script>
+        let currentTab = 'Frases y patrones';
+        let currentPath = [];
+        let history = [];
+        let historyIndex = -1;
+        const MAX_HISTORY = 20;
+
+        let data = JSON.parse(localStorage.getItem('jit_music_simple')) || {
+            'Frases y patrones': { items: [] },
+            'Cadenas': { items: [] },
+            'Conceptos': { items: [] },
+            'Canciones': { items: [] }
+        };
+
+        function pushHistory() {
+            if (historyIndex < history.length - 1) history = history.slice(0, historyIndex + 1);
+            history.push(JSON.stringify(data));
+            if (history.length > MAX_HISTORY) history.shift();
+            else historyIndex++;
+            updateHistoryButtons();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                data = JSON.parse(history[historyIndex]);
+                currentPath = [];
+                save(false); render();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                data = JSON.parse(history[historyIndex]);
+                currentPath = [];
+                save(false); render();
+            }
+        }
+
+        function updateHistoryButtons() {
+            document.getElementById('btn-undo').disabled = historyIndex <= 0;
+            document.getElementById('btn-redo').disabled = historyIndex >= history.length - 1;
+        }
+
+        function save(recordHistory = true) {
+            localStorage.setItem('jit_music_simple', JSON.stringify(data));
+            if (recordHistory) pushHistory();
+            updateHistoryButtons();
+        }
+
+        function getCurrentFolder() {
+            if (!data[currentTab]) currentTab = Object.keys(data)[0];
+            let folder = data[currentTab];
+            let newPath = [];
+            for (let id of currentPath) { 
+                const found = folder.items.find(i => i.id === id);
+                if (found && found.type === 'folder') {
+                    folder = found;
+                    newPath.push(id);
+                } else break;
+            }
+            currentPath = newPath;
+            return folder;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab; currentPath = [];
+            document.getElementById('view-title').innerText = tab;
+            document.querySelectorAll('.nav-item').forEach(el => {
+                const isActive = el.dataset.tab === tab;
+                el.classList.toggle('text-blue-600', isActive);
+                el.classList.toggle('font-bold', isActive);
+                el.classList.toggle('text-slate-400', !isActive);
+            });
+            render();
+        }
+
+        function goBack() { currentPath.pop(); render(); }
+
+        let clipboard = null;
+        let longPressTimer;
+        let contextTargetId = null;
+        let selectedItems = new Set();
+        let lastToggleTime = 0;
+        window.expandedDesc = window.expandedDesc || {};
+
+        function toggleSelection(e, id) {
+            if (e && e.preventDefault) e.preventDefault();
+            if (Date.now() - lastToggleTime < 300) return;
+            lastToggleTime = Date.now();
+            const el = document.querySelector(`[data-id="${id}"]`);
+            if (selectedItems.has(id)) {
+                selectedItems.delete(id);
+                if (el) {
+                    el.classList.remove('ring-2', 'ring-blue-500', 'border-blue-500');
+                    if (el.classList.contains('bg-white')) el.classList.add('border-slate-200', 'dark:border-zinc-800');
+                    else el.classList.add('border-transparent');
+                }
+            } else {
+                selectedItems.add(id);
+                if (el) {
+                    el.classList.remove('border-slate-200', 'dark:border-zinc-800', 'border-transparent');
+                    el.classList.add('ring-2', 'ring-blue-500', 'border-blue-500');
+                }
+            }
+        }
+
+        function handleThreeDots(e, id) {
+            e.stopPropagation();
+            if (!selectedItems.has(id)) {
+                selectedItems.clear();
+                selectedItems.add(id);
+                render();
+            }
+            showContextMenu(e, id);
+        }
+
+        function showContextMenu(e, id = null) {
+            if (e.preventDefault) e.preventDefault();
+            contextTargetId = id;
+            const menu = document.getElementById('context-menu');
+            const itemActions = document.getElementById('ctx-item-actions');
+            const emptyActions = document.getElementById('ctx-empty-actions');
+            const editBtn = document.getElementById('ctx-btn-edit');
+
+            if (id) {
+                itemActions.classList.remove('hidden');
+                emptyActions.classList.add('hidden');
+                if (editBtn) editBtn.style.display = selectedItems.size > 1 ? 'none' : 'flex';
+            } else if (clipboard && clipboard.items && clipboard.items.length > 0) {
+                itemActions.classList.add('hidden');
+                emptyActions.classList.remove('hidden');
+            } else return;
+
+            menu.classList.remove('hidden');
+            let x = e.pageX || (e.touches ? e.touches[0].pageX : 0);
+            let y = e.pageY || (e.touches ? e.touches[0].pageY : 0);
+            if (x + 160 > window.innerWidth) x -= 160;
+            if (y + 200 > window.innerHeight) y -= 200;
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function hideContextMenu() { document.getElementById('context-menu').classList.add('hidden'); }
+
+        function handleCtx(action) {
+            const folder = getCurrentFolder();
+            const itemsToProcess = folder.items.filter(i => selectedItems.has(i.id));
+            if (itemsToProcess.length === 0 && action !== 'paste') { hideContextMenu(); return; }
+
+            switch(action) {
+                case 'delete': 
+                    itemsToProcess.forEach(item => {
+                        const idx = folder.items.findIndex(i => i.id === item.id);
+                        if (idx !== -1) folder.items.splice(idx, 1);
+                    });
+                    selectedItems.clear();
+                    save(); render();
+                    break;
+                case 'copy': 
+                    clipboard = { items: JSON.parse(JSON.stringify(itemsToProcess)), mode: 'copy' };
+                    selectedItems.clear();
+                    render();
+                    break;
+                case 'cut': 
+                    clipboard = { items: JSON.parse(JSON.stringify(itemsToProcess)), mode: 'cut' };
+                    selectedItems.clear();
+                    render();
+                    break;
+                case 'edit': 
+                    if (itemsToProcess.length === 1) {
+                        const item = itemsToProcess[0];
+                        if (item.type === 'folder') openFolderModal(item); else openCardModal(item);
+                    }
+                    selectedItems.clear();
+                    render();
+                    break;
+            }
+            hideContextMenu();
+        }
+
+        function pasteItem() {
+            if (!clipboard || !clipboard.items) return;
+            const folder = getCurrentFolder();
+            
+            clipboard.items.forEach(clipItem => {
+                const newItem = JSON.parse(JSON.stringify(clipItem));
+                if (clipboard.mode === 'cut') {
+                    Object.keys(data).forEach(tab => {
+                        const remove = (container) => {
+                            const idx = container.items.findIndex(i => i.id === clipItem.id);
+                            if (idx !== -1) { container.items.splice(idx, 1); return true; }
+                            return container.items.some(i => i.type === 'folder' && remove(i));
+                        };
+                        remove(data[tab]);
+                    });
+                } else {
+                    newItem.id = (newItem.type === 'card' ? 'card-' : 'fld-') + Date.now() + Math.random().toString(36).substr(2, 5);
+                }
+                folder.items.unshift(newItem);
+            });
+            
+            if (clipboard.mode === 'cut') clipboard = null;
+            save(); render();
+        }
+
+        function attachContextHandlers(el, id = null) {
+            el.oncontextmenu = (e) => {
+                if (e.target && (e.target.closest('.levels-trigger') || e.target.closest('.edit-trigger') || e.target.closest('.desc-toggle'))) return;
+                toggleSelection(e, id);
+            };
+            el.ontouchstart = (e) => {
+                if (e.target && (e.target.closest('.levels-trigger') || e.target.closest('.edit-trigger') || e.target.closest('.desc-toggle'))) return;
+                longPressTimer = setTimeout(() => toggleSelection(e, id), 500);
+            };
+            el.ontouchend = () => clearTimeout(longPressTimer);
+            el.ontouchmove = () => clearTimeout(longPressTimer);
+        }
+
+        // Variables para mantener el estado del nuevo modal de niveles
+        window.activeModalId = null;
+        window.expandedSections = window.expandedSections || {};
+
+        window.toggleLevelsModal = function(id) {
+            if(window.activeModalId === id) {
+                window.activeModalId = null;
+                const modal = document.getElementById(`levels-modal-${id}`);
+                if(modal) {
+                    modal.classList.replace('flex', 'hidden');
+                    const card = modal.closest('.card-enter');
+                    if(card) {
+                        card.style.zIndex = '';
+                        card.style.transform = ''; 
+                        card.style.animation = ''; // Restaura animaciones y el trap CSS original 
+                    }
+                }
+            } else {
+                // Cerrar cualquier modal que ya estuviera abierto para evitar colisiones
+                if(window.activeModalId) {
+                    const oldModal = document.getElementById(`levels-modal-${window.activeModalId}`);
+                    if(oldModal) {
+                        oldModal.classList.replace('flex', 'hidden');
+                        const oldCard = oldModal.closest('.card-enter');
+                        if(oldCard) {
+                            oldCard.style.zIndex = '';
+                            oldCard.style.transform = '';
+                            oldCard.style.animation = '';
+                        }
+                    }
+                }
+                window.activeModalId = id;
+                const modal = document.getElementById(`levels-modal-${id}`);
+                if(modal) {
+                    modal.classList.replace('hidden', 'flex');
+                    const card = modal.closest('.card-enter');
+                    if(card) {
+                        // ELEVACIÓN CRÍTICA: Rompe el contexto de apilamiento para flotar sobre carpetas y llenar la pantalla
+                        card.style.zIndex = '99999';
+                        card.style.transform = 'none'; 
+                        card.style.animation = 'none'; 
+                    }
+                }
+            }
+        };
+
+        window.toggleSection = function(id, sec) {
+            const key = `${id}-${sec}`;
+            window.expandedSections[key] = !window.expandedSections[key];
+            const el = document.getElementById(`sec-${sec}-${id}`);
+            const icon = document.getElementById(`icon-${sec}-${id}`);
+            if(window.expandedSections[key]) {
+                el.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                el.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        };
+
+        function render() {
+            const container = document.getElementById('card-container');
+            container.innerHTML = '';
+            const folder = getCurrentFolder();
+            document.getElementById('breadcrumb').classList.toggle('hidden', currentPath.length === 0);
+            
+            if (folder.items.length === 0) {
+                container.innerHTML = `<div class="py-20 text-center opacity-20"><i data-lucide="inbox" class="mx-auto w-10 h-10 mb-2"></i><p>Vacío</p></div>`;
+            } else {
+                folder.items.forEach(item => {
+                    const div = document.createElement('div');
+                    const isSelected = selectedItems.has(item.id);
+                    const isCut = clipboard && clipboard.mode === 'cut' && clipboard.items.some(c => c.id === item.id);
+                    div.setAttribute('data-id', item.id);
+                    if (isCut) div.style.display = 'none';
+                    
+                    if (item.type === 'folder') {
+                        div.className = `card-enter bg-slate-100 dark:bg-zinc-800 rounded-2xl p-4 flex items-center justify-between cursor-pointer active:scale-95 transition-all border ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-transparent'}`;
+                        div.onclick = () => { currentPath.push(item.id); render(); };
+                        div.innerHTML = `
+    <div class="flex items-center gap-4">
+        <i data-lucide="folder" class="w-6 h-6 text-blue-500 fill-blue-500/20"></i>
+        <div><h4 class="font-bold text-sm">${item.title}</h4></div>
+    </div>
+
+    <div class="flex items-center gap-1">
+        <button onclick="event.stopPropagation(); moveItem('${item.id}', -1)" class="p-1 text-slate-400">
+            <i data-lucide="chevron-up" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="event.stopPropagation(); moveItem('${item.id}', 1)" class="p-1 text-slate-400">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+
+        <div onclick="handleThreeDots(event, '${item.id}')" class="text-slate-300 p-2 edit-trigger">
+            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+        </div>
+    </div>
+`;
+                    } else {
+                        // Ensure data structures exist for old elements
+                        item.analisis = item.analisis || { teorico: false, tecnico: false, emocional: false };
+                        item.mejora = item.mejora || 0;
+                        item.consistencia = item.consistencia || { c0: false, c1: false };
+                        item.automatismo = item.automatismo || { a0: false, a1: false };
+                        item.transferencia = item.transferencia || { t0: false, t1: false };
+
+                        // CALCULO DE PROGRESO GLOBAL (Pesos divididos en 5 categorías de 20% cada una)
+                        const analisisScore = ((item.analisis.teorico?1:0) + (item.analisis.tecnico?1:0) + (item.analisis.emocional?1:0)) / 3 * 100;
+                        const mejoraScore = parseInt(item.mejora) || 0;
+                        const consistenciaScore = ((item.consistencia.c0?1:0) + (item.consistencia.c1?1:0)) / 2 * 100;
+                        const automatismoScore = ((item.automatismo.a0?1:0) + (item.automatismo.a1?1:0)) / 2 * 100;
+                        const transferenciaScore = ((item.transferencia.t0?1:0) + (item.transferencia.t1?1:0)) / 2 * 100;
+                        const progGral = Math.round((analisisScore + mejoraScore + consistenciaScore + automatismoScore + transferenciaScore) / 5);
+
+                        const getBtnHTML = (id, section, key, title, subtitle) => {
+                            const isActive = item[section][key];
+                            const baseClass = isActive 
+                                ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-600 dark:text-blue-400' 
+                                : 'bg-slate-50 dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600';
+                            const icon = isActive ? 'check-circle-2' : 'circle';
+                            let subtitleHTML = subtitle ? `<div class="text-xs opacity-70 mt-0.5">${subtitle}</div>` : '';
+                            
+                            return `
+                                <button onclick="event.stopPropagation(); document.activeElement.blur(); toggleCardState('${id}', '${section}', '${key}')" class="w-full flex justify-between items-center p-3 rounded-xl border transition-colors ${baseClass}">
+                                    <div class="text-left">
+                                        <div class="text-xs font-bold">${title}</div>
+                                        ${subtitleHTML}
+                                    </div>
+                                    <i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i>
+                                </button>
+                            `;
+                        };
+
+                        const getAccordion = (secID, title, contentHTML) => {
+                            const key = `${item.id}-${secID}`;
+                            const isExp = window.expandedSections && window.expandedSections[key];
+                            return `
+                                <div class="border border-slate-100 dark:border-zinc-800 rounded-xl mb-3 overflow-hidden">
+                                    <div class="bg-slate-50 dark:bg-zinc-800/50 p-4 flex justify-between items-center cursor-pointer" onclick="toggleSection('${item.id}', '${secID}')">
+                                        <h4 class="text-xs font-bold text-slate-600 dark:text-zinc-300 uppercase tracking-widest">${title}</h4>
+                                        <i id="icon-${secID}-${item.id}" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200 text-slate-400" style="${isExp ? 'transform: rotate(180deg);' : ''}"></i>
+                                    </div>
+                                    <div id="sec-${secID}-${item.id}" class="p-3 flex flex-col gap-2 ${isExp ? '' : 'hidden'}">
+                                        ${contentHTML}
+                                    </div>
+                                </div>
+                            `;
+                        };
+
+                        const descText = item.description || 'Sin notas';
+                        const isDescExpanded = window.expandedDesc && window.expandedDesc[item.id];
+                        const needsTruncation = descText.length > 100;
+                        const displayDesc = (needsTruncation && !isDescExpanded) ? descText.substring(0, 100) + '...' : descText;
+                        const toggleDescBtn = needsTruncation ? `<span class="text-blue-500 cursor-pointer ml-1 font-bold desc-toggle" onclick="event.stopPropagation(); window.expandedDesc['${item.id}'] = !window.expandedDesc['${item.id}']; render();">${isDescExpanded ? 'Mostrar menos' : 'Mostrar más'}</span>` : '';
+
+                        div.className = `card-enter bg-white dark:bg-zinc-900 rounded-2xl p-5 shadow-sm border relative ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 dark:border-zinc-800'}`;
+                        div.innerHTML = `
+                            <div class="flex justify-between items-start mb-1">
+    <h3 class="font-bold text-base leading-tight">${item.title}</h3>
+
+    <div class="flex items-center gap-1">
+        <button onclick="event.stopPropagation(); moveItem('${item.id}', -1)" class="p-1 text-slate-400">
+            <i data-lucide="chevron-up" class="w-4 h-4"></i>
+        </button>
+
+        <button onclick="event.stopPropagation(); moveItem('${item.id}', 1)" class="p-1 text-slate-400">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+
+        <div onclick="handleThreeDots(event, '${item.id}')" class="text-slate-300 p-2 edit-trigger">
+            <i data-lucide="more-vertical" class="w-5 h-5"></i>
+        </div>
+    </div>
+</div>
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-zinc-400 whitespace-pre-wrap mb-4">${displayDesc}${toggleDescBtn}</p>
+                            
+                            <div class="pt-4 border-t border-slate-100 dark:border-zinc-800">
+                                <!-- BARRA DE PROGRESO GENERAL (Botón que abre el modal) -->
+                                <div class="cursor-pointer group levels-trigger" onclick="event.stopPropagation(); toggleLevelsModal('${item.id}')">
+                                    <div class="flex justify-between items-end mb-1">
+                                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Progreso General</h4>
+                                        <span class="text-sm font-black text-blue-600">${progGral}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 dark:bg-zinc-800 h-2 rounded-full overflow-hidden mb-2">
+                                        <div class="bg-blue-600 h-full transition-all duration-300" style="width: ${progGral}%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-500 font-bold uppercase text-center opacity-60 group-hover:opacity-100 transition-opacity">Toca para gestionar niveles</p>
+                                </div>
+                            </div>
+
+   <!-- MODAL DE NIVELES (POPUP COMPLETO CON BLUR Y Z-INDEX SEGURO) -->
+<div id="levels-modal-${item.id}" 
+     class="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] hidden items-center justify-center p-6"
+     onclick="toggleLevelsModal('${item.id}')"
+     ontouchstart="event.stopPropagation()"
+     oncontextmenu="event.stopPropagation()">
+
+<div class="modal-content bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl flex flex-col relative max-h-[90vh] overflow-hidden"
+     onclick="event.stopPropagation()">
+
+<button onclick="toggleLevelsModal('${item.id}')" 
+        class="absolute top-2 right-3 text-2xl font-bold text-gray-500 z-[100001]">
+    ×
+</button>
+<!-- Header del Modal -->
+                                    <div class="p-6 border-b border-slate-100 dark:border-zinc-800 flex justify-between items-center shrink-0">
+                                        <div>
+                                            <h3 class="font-black text-lg text-blue-600 leading-tight">Niveles de Progreso</h3>
+                                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">${item.title}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contenido Escroleable -->
+                                    <div class="p-6 overflow-y-auto flex-1">
+                                        
+                                        <!-- Progreso General en el Modal -->
+                                        <div class="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl">
+                                            <div class="flex justify-between items-end mb-2">
+                                                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Progreso Global Evaluado</h4>
+                                                <span class="text-xl font-black text-blue-600">${progGral}%</span>
+                                            </div>
+                                            <div class="w-full bg-blue-200/50 dark:bg-blue-900/50 h-2 rounded-full overflow-hidden">
+                                                <div class="bg-blue-600 h-full transition-all duration-300" style="width: ${progGral}%"></div>
+                                            </div>
+                                        </div>
+
+                                        ${getAccordion('analisis', 'Análisis (3 Puntos)', `
+                                            ${getBtnHTML(item.id, 'analisis', 'teorico', 'Análisis teórico', null)}
+                                            ${getBtnHTML(item.id, 'analisis', 'tecnico', 'Análisis técnico', null)}
+                                            ${getBtnHTML(item.id, 'analisis', 'emocional', 'Análisis emocional', null)}
+                                        `)}
+
+                                        ${getAccordion('mejora', 'Ajustar Mejora (Velocidad)', `
+                                            <div class="flex justify-between items-end mb-1 mt-2">
+                                                <span class="text-xs text-slate-500 font-bold uppercase tracking-widest">Un intento sin errores</span>
+                                                <span id="slider-val-modal-${item.id}" class="text-sm font-black text-blue-600">${item.mejora}%</span>
+                                            </div>
+                                            <input type="range" min="0" max="100" value="${item.mejora}" 
+                                                oninput="updateCardSlider('${item.id}', this.value); document.getElementById('slider-val-modal-${item.id}').innerText=this.value+'%';" 
+                                                onchange="saveCardSlider()" 
+                                                onclick="event.stopPropagation()"
+                                                class="mejora-slider mt-4 mb-2">
+                                        `)}
+
+                                        ${getAccordion('consistencia', 'Consistencia (2 Puntos)', `
+                                            ${getBtnHTML(item.id, 'consistencia', 'c0', 'Consistencia 0', 'En el mismo día de la sesión de práctica')}
+                                            ${getBtnHTML(item.id, 'consistencia', 'c1', 'Consistencia 1', 'A la primera luego de pasado al menos un día')}
+                                        `)}
+
+                                        ${getAccordion('automatismo', 'Automatismo (2 Puntos)', `
+                                            ${getBtnHTML(item.id, 'automatismo', 'a0', 'Automatismo 0', 'En el mismo día de la sesión de práctica')}
+                                            ${getBtnHTML(item.id, 'automatismo', 'a1', 'Automatismo 1', 'A la primera luego de pasado al menos un día')}
+                                        `)}
+
+                                        ${getAccordion('transferencia', 'Transferencia y Estabilidad (2 Puntos)', `
+                                            ${getBtnHTML(item.id, 'transferencia', 't0', 'Transferencia 0', 'En el mismo día de la sesión de práctica')}
+                                            ${getBtnHTML(item.id, 'transferencia', 't1', 'Transferencia 1+', 'A la primera. El número de días puede aumentar')}
+                                        `)}
+
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    attachContextHandlers(div, item.id);
+                    container.appendChild(div);
+                });
+            }
+            
+            const spacer = document.createElement('div');
+            spacer.className = 'h-48 w-full shrink-0 paste-zone';
+            container.appendChild(spacer);
+            
+            // Restaurar el modal si estaba abierto antes de renderizar (evita que se cierre al hacer click) y elevar Z-Index
+            if (window.activeModalId) {
+                const modal = document.getElementById(`levels-modal-${window.activeModalId}`);
+                if (modal) {
+                    modal.classList.replace('hidden', 'flex');
+                    const card = modal.closest('.card-enter');
+                    if(card) {
+                        card.style.zIndex = '99999';
+                        card.style.transform = 'none';
+                        card.style.animation = 'none';
+                    }
+                }
+            }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Funciones unificadas de actualización de subniveles de tarjeta
+        window.toggleCardState = function(cardId, section, key) {
+            const folder = getCurrentFolder();
+            const item = folder.items.find(i => i.id === cardId);
+            if(item) {
+                if(!item[section]) item[section] = {};
+                item[section][key] = !item[section][key];
+                window.activeModalId = cardId;
+                save(); render();
+            }
+        };
+
+        window.updateCardSlider = function(cardId, value) {
+            const folder = getCurrentFolder();
+            const item = folder.items.find(i => i.id === cardId);
+            if(item) {
+                item.mejora = parseInt(value);
+            }
+        };
+
+        window.saveCardSlider = function() {
+            save(true);
+            render();
+        };
+
+        function deleteItem(id) { 
+            const f = getCurrentFolder(); 
+            const idx = f.items.findIndex(i => i.id === id);
+            if (idx !== -1) { f.items.splice(idx, 1); save(); render(); }
+        }
+
+        let editingItemId = null;
+        function openCardModal(item = null) {
+            const form = document.getElementById('card-form');
+            form.reset();
+            if (item) {
+                editingItemId = item.id;
+                document.getElementById('card-modal-title').innerText = "Editar Card";
+                document.getElementById('form-title').value = item.title;
+                document.getElementById('form-desc').value = item.description || "";
+            } else {
+                editingItemId = null;
+                document.getElementById('card-modal-title').innerText = "Nueva Card";
+            }
+            document.getElementById('card-modal').classList.replace('hidden', 'flex');
+        }
+
+        function closeCardModal() { document.getElementById('card-modal').classList.replace('flex', 'hidden'); }
+
+        document.getElementById('card-form').onsubmit = e => {
+            e.preventDefault();
+            const folder = getCurrentFolder();
+            const title = document.getElementById('form-title').value;
+            const desc = document.getElementById('form-desc').value;
+            if (editingItemId) {
+                const item = folder.items.find(i => i.id === editingItemId);
+                if (item) { item.title = title; item.description = desc; }
+            } else {
+                folder.items.unshift({ 
+                    id: 'card-' + Date.now(), 
+                    type: 'card', 
+                    title, 
+                    description: desc,
+                    analisis: { teorico: false, tecnico: false, emocional: false },
+                    mejora: 0,
+                    consistencia: { c0: false, c1: false },
+                    automatismo: { a0: false, a1: false },
+                    transferencia: { t0: false, t1: false }
+                });
+            }
+            save(); render(); closeCardModal();
+        };
+
+        function openFolderModal(item = null) {
+            const modal = document.getElementById('folder-modal');
+            const input = document.getElementById('folder-name');
+            const btn = document.getElementById('folder-save-btn');
+            if (item) {
+                editingItemId = item.id;
+                document.getElementById('folder-modal-title').innerText = "Editar Carpeta";
+                input.value = item.title;
+                btn.innerText = "Actualizar";
+                btn.onclick = () => { item.title = input.value || "Carpeta"; save(); render(); closeFolderModal(); };
+            } else {
+                editingItemId = null;
+                document.getElementById('folder-modal-title').innerText = "Nueva Carpeta";
+                input.value = "";
+                btn.innerText = "Crear";
+                btn.onclick = createFolder;
+            }
+            modal.classList.replace('hidden', 'flex');
+        }
+
+        function closeFolderModal() { document.getElementById('folder-modal').classList.add('hidden'); }
+        function handleFolderOverlayClick(e) { if (e.target.id === 'folder-modal') closeFolderModal(); }
+        function createFolder() { getCurrentFolder().items.unshift({ id: 'fld-' + Date.now(), type: 'folder', title: document.getElementById('folder-name').value || 'Nueva Carpeta', items: [] }); save(); render(); closeFolderModal(); }
+function moveItem(id, direction) {
+    const folder = getCurrentFolder();
+    const index = folder.items.findIndex(i => i.id === id);
+
+    if (index === -1) return;
+
+    const newIndex = index + direction;
+
+    if (newIndex < 0 || newIndex >= folder.items.length) return;
+
+    [folder.items[index], folder.items[newIndex]] =
+        [folder.items[newIndex], folder.items[index]];
+
+    save();
+    render();
+}
+
+        /* Tools Logic */
+        let audioCtx = null;
+        const initAudio = () => { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); };
+
+        function updateDrawerStates() {
+            document.getElementById('drawer-btn-metro').classList.toggle('text-blue-600', isMetroRunning);
+            
+            const btnTimer = document.getElementById('drawer-btn-timer');
+            btnTimer.classList.toggle('text-blue-600', timerRunning);
+            btnTimer.classList.toggle('text-slate-400', !timerRunning);
+
+            const btnSw = document.getElementById('drawer-btn-stopwatch');
+            btnSw.classList.toggle('text-blue-600', swRunning);
+            btnSw.classList.toggle('text-slate-400', !swRunning);
+            
+            document.getElementById('drawer-btn-dual').classList.toggle('text-indigo-600', !!dualTimerId);
+        }
+
+        function toggleToolsDrawer() {
+            const d = document.getElementById('tools-drawer');
+            const isOpen = d.classList.contains('drawer-visible');
+            d.classList.toggle('drawer-hidden', isOpen);
+            d.classList.toggle('drawer-visible', !isOpen);
+            if(!isOpen) updateDrawerStates();
+        }
+
+        function playMajorArpeggio() {
+            initAudio(); const now = audioCtx.currentTime; const notes = [261.63, 329.63, 392.00, 523.25];
+            notes.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(freq, now + (i * 0.1));
+                g.gain.setValueAtTime(0, now + (i * 0.1)); g.gain.linearRampToValueAtTime(0.2, now + (i * 0.1) + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.1) + 0.5);
+                o.connect(g); g.connect(audioCtx.destination); o.start(now + (i * 0.1)); o.stop(now + (i * 0.1) + 0.6);
+            });
+        }
+
+        // Metrónomo
+        let bpm = 120, isMetroRunning = false, metroTimerId = null, nextBeatTime = 0;
+        function playClick(t) { const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='sine'; o.frequency.value=1000; g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.04); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+0.04); }
+        function metroScheduler() { while(nextBeatTime < audioCtx.currentTime + 0.1) { playClick(nextBeatTime); nextBeatTime += 60/bpm; } metroTimerId = setTimeout(metroScheduler, 25); }
+        function toggleMetronome() {
+            initAudio(); isMetroRunning = !isMetroRunning; const b = document.getElementById('metro-toggle'), i = document.getElementById('metro-icon');
+            if(isMetroRunning) { b.classList.add('bg-blue-600','text-white'); i.setAttribute('data-lucide','pause'); nextBeatTime=audioCtx.currentTime+0.05; metroScheduler(); }
+            else { b.classList.remove('bg-blue-600','text-white'); i.setAttribute('data-lucide','play'); clearTimeout(metroTimerId); }
+            updateDrawerStates(); if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        function setBPM(v) { bpm=parseInt(v); document.getElementById('detail-bpm').innerText=v; }
+        function changeBPM(d) { bpm=Math.min(300, Math.max(30, bpm+d)); setBPM(bpm); document.getElementById('bpm-slider').value = bpm; }
+
+        // Temporizador
+        let timeLeft=0, timerRunning=false, countdownId=null;
+        function toggleTimer() {
+            if(timerRunning) { clearInterval(countdownId); timerRunning=false; document.getElementById('timer-btn').innerText='Iniciar'; }
+            else { 
+                initAudio(); timeLeft=Math.round(parseFloat(document.getElementById('timer-select').value)*60); timerRunning=true; document.getElementById('timer-btn').innerText='Parar'; 
+                countdownId=setInterval(()=>{ timeLeft--; updateTimerDisplay(); if(timeLeft<=0){ clearInterval(countdownId); timerRunning=false; finishTimer(); } },1000); 
+            }
+            updateDrawerStates();
+        }
+        function updateTimerDisplay() { const m=Math.floor(timeLeft/60), s=Math.max(0, Math.round(timeLeft%60)); document.getElementById('detail-timer-clock').innerText=`${m}:${s<10?'0':''}${s}`; }
+        function finishTimer() { 
+            playMajorArpeggio(); 
+            document.getElementById('alarm-banner').classList.remove('hidden'); 
+            document.getElementById('stop-alarm-btn').classList.remove('hidden'); 
+            document.getElementById('timer-btn').classList.add('hidden'); 
+            updateDrawerStates(); 
+            const modal = document.getElementById('timer-modal');
+            modal.classList.replace('hidden', 'flex');
+            modal.style.zIndex = '999999';
+        }
+        function stopAlarm() { 
+            document.getElementById('alarm-banner').classList.add('hidden'); 
+            document.getElementById('stop-alarm-btn').classList.add('hidden'); 
+            document.getElementById('timer-btn').classList.remove('hidden'); 
+            document.getElementById('timer-btn').innerText='Iniciar'; 
+            document.getElementById('timer-modal').style.zIndex = '';
+            updateTimerDisplay(); 
+        }
+
+        // Cronómetro
+        let swTime = 0, swRunning = false, swIntervalId = null;
+        function toggleStopwatch() {
+            const btn = document.getElementById('sw-btn-toggle');
+            const icon = document.getElementById('sw-toggle-icon');
+            if(swRunning) { 
+                clearInterval(swIntervalId); swRunning = false; 
+                btn.querySelector('span').innerText = 'Continuar'; 
+                icon.setAttribute('data-lucide', 'play');
+            } else { 
+                swRunning = true; 
+                btn.querySelector('span').innerText = 'Pausar';
+                icon.setAttribute('data-lucide', 'pause');
+                let lastTime = Date.now();
+                swIntervalId = setInterval(() => {
+                    const now = Date.now(); swTime += (now - lastTime); lastTime = now;
+                    updateStopwatchDisplay();
+                }, 43);
+            }
+            updateDrawerStates();
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        function updateStopwatchDisplay() {
+            const ms = Math.floor((swTime % 1000) / 10);
+            const s = Math.floor((swTime / 1000) % 60);
+            const m = Math.floor((swTime / 1000 / 60));
+            document.getElementById('sw-display').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}.${ms < 10 ? '0' : ''}${ms}`;
+        }
+        function resetStopwatch() { 
+            clearInterval(swIntervalId); swRunning = false; swTime = 0; updateStopwatchDisplay(); 
+            const btn = document.getElementById('sw-btn-toggle');
+            btn.querySelector('span').innerText = 'Iniciar'; 
+            document.getElementById('sw-toggle-icon').setAttribute('data-lucide', 'play');
+            updateDrawerStates(); 
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Dynamic Notes (Unlimited Pages)
+        let notePages = JSON.parse(localStorage.getItem('jit_note_pages')) || [""];
+        let currentNotePageIndex = 0;
+
+        function saveNotes() {
+            notePages[currentNotePageIndex] = document.getElementById('notes-content').value;
+            localStorage.setItem('jit_note_pages', JSON.stringify(notePages));
+        }
+
+        function loadNotes() {
+            document.getElementById('notes-content').value = notePages[currentNotePageIndex] || "";
+            document.getElementById('note-page-indicator').innerText = `Pág ${currentNotePageIndex + 1}/${notePages.length}`;
+            document.getElementById('delete-page-btn').classList.toggle('hidden', notePages.length <= 1);
+        }
+
+        function addNewNotePage() {
+            saveNotes();
+            notePages.push("");
+            currentNotePageIndex = notePages.length - 1;
+            loadNotes();
+            saveNotes();
+        }
+
+        function changeNotePage(dir) {
+            saveNotes();
+            currentNotePageIndex += dir;
+            if (currentNotePageIndex < 0) currentNotePageIndex = notePages.length - 1;
+            if (currentNotePageIndex >= notePages.length) currentNotePageIndex = 0;
+            loadNotes();
+        }
+
+        function deleteCurrentNotePage() {
+            if (notePages.length <= 1) return;
+            notePages.splice(currentNotePageIndex, 1);
+            currentNotePageIndex = Math.max(0, currentNotePageIndex - 1);
+            loadNotes();
+            saveNotes();
+        }
+
+        // Dual Task (Flexible)
+        let dualTimerId = null, scheduledBeeps = [], actualBeepsPlayed = 0;
+        function updateDualTimeDisplay(val) { document.getElementById('dual-time-display').innerText = `${val}s`; }
+        function startDualTask() {
+            initAudio(); 
+            const durationSec = parseInt(document.getElementById('dual-time-slider').value); 
+            const maxBeeps = parseInt(document.getElementById('dual-beeps-max').value); 
+            const countToPlay = Math.floor(Math.random() * maxBeeps) + 1; 
+            actualBeepsPlayed = 0; scheduledBeeps = [];
+            
+            for(let i=0; i<countToPlay; i++) { scheduledBeeps.push(Math.random() * (durationSec - 2) + 1); } 
+            scheduledBeeps.sort((a,b) => b-a);
+            
+            document.getElementById('dual-setup').classList.add('hidden'); 
+            document.getElementById('dual-active').classList.remove('hidden'); 
+            const startTime = Date.now(); 
+            dualTimerId = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000; 
+                const displayRemaining = Math.max(0, Math.ceil(durationSec - elapsed)); 
+                const m=Math.floor(displayRemaining/60), s=displayRemaining%60; 
+                document.getElementById('dual-clock').innerText = `${m}:${s<10?'0':''}${s}`;
+                while(scheduledBeeps.length > 0 && elapsed >= scheduledBeeps[scheduledBeeps.length - 1]) { 
+                    playShortBeep(); actualBeepsPlayed++; scheduledBeeps.pop(); 
+                }
+                if(elapsed >= durationSec) { clearInterval(dualTimerId); finishDualTask(); }
+            }, 50);
+            updateDrawerStates();
+        }
+        function playShortBeep() { const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='square'; o.frequency.value=800; g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.1); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.1); }
+        function finishDualTask() { playMajorArpeggio(); document.getElementById('dual-active').classList.add('hidden'); document.getElementById('dual-result').classList.remove('hidden'); document.getElementById('actual-count-val').innerText = actualBeepsPlayed; clearInterval(dualTimerId); dualTimerId = null; updateDrawerStates(); }
+        function stopDualTask() { clearInterval(dualTimerId); dualTimerId = null; resetDualTask(); updateDrawerStates(); }
+        function revealDualAnswer() { document.getElementById('reveal-btn').classList.add('hidden'); document.getElementById('actual-beeps').classList.remove('hidden'); }
+        function resetDualTask() { document.getElementById('dual-setup').classList.remove('hidden'); document.getElementById('dual-active').classList.add('hidden'); document.getElementById('dual-result').classList.add('hidden'); document.getElementById('reveal-btn').classList.remove('hidden'); document.getElementById('actual-beeps').classList.add('hidden'); }
+
+        // Modal Openers
+        function openMetroDetail() { toggleToolsDrawer(); document.getElementById('metro-modal').classList.replace('hidden','flex'); }
+        function closeMetroDetail() { document.getElementById('metro-modal').classList.replace('flex','hidden'); }
+        function openTimerDetail() { toggleToolsDrawer(); document.getElementById('timer-modal').classList.replace('hidden','flex'); }
+        function closeTimerDetail() { document.getElementById('timer-modal').classList.replace('flex','hidden'); }
+        function openStopwatchDetail() { toggleToolsDrawer(); document.getElementById('stopwatch-modal').classList.replace('hidden','flex'); }
+        function closeStopwatchDetail() { document.getElementById('stopwatch-modal').classList.replace('flex','hidden'); }
+        function openNotesDetail() { toggleToolsDrawer(); loadNotes(); document.getElementById('notes-modal').classList.replace('hidden','flex'); if(typeof lucide !== 'undefined') lucide.createIcons(); }
+        function closeNotesDetail() { document.getElementById('notes-modal').classList.replace('flex','hidden'); }
+        function openDualTaskDetail() { toggleToolsDrawer(); document.getElementById('dual-modal').classList.replace('hidden','flex'); }
+        function closeDualTaskDetail() { document.getElementById('dual-modal').classList.replace('flex','hidden'); }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const isOpen = sidebar.classList.contains('translate-x-0');
+            sidebar.classList.toggle('translate-x-0', !isOpen); sidebar.classList.toggle('-translate-x-full', isOpen);
+            overlay.classList.toggle('opacity-100', !isOpen); overlay.classList.toggle('opacity-0', isOpen);
+            overlay.classList.toggle('pointer-events-none', isOpen);
+        }
+
+        window.onclick = (e) => {
+            hideContextMenu();
+            if (!document.body.contains(e.target)) return;
+            if (!e.target.closest('.card-enter') && !e.target.closest('#context-menu') && selectedItems.size > 0) {
+                selectedItems.clear();
+                render();
+            }
+        };
+        
+        window.onload = () => { 
+            pushHistory(); 
+            if(typeof lucide !== 'undefined') lucide.createIcons(); 
+            switchTab('Frases y patrones'); 
+            loadNotes(); 
+
+            // Manejadores de contexto (Copiar/Pegar) para el fondo vacío de la aplicación
+            const container = document.getElementById('card-container');
+            container.oncontextmenu = (e) => {
+                if (e.target === container || e.target.closest('.py-20') || e.target.closest('.paste-zone')) {
+                    e.preventDefault();
+                    showContextMenu(e, null);
+                }
+            };
+            let bgPressTimer;
+            container.ontouchstart = (e) => {
+                if (e.target === container || e.target.closest('.py-20') || e.target.closest('.paste-zone')) {
+                    bgPressTimer = setTimeout(() => {
+                        showContextMenu(e, null);
+                    }, 500);
+                }
+            };
+            container.ontouchend = () => clearTimeout(bgPressTimer);
+            container.ontouchmove = () => clearTimeout(bgPressTimer);
+        };
+        
+    </script>
+    <script src="./lucide.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.log('Service Worker failed', err));
+  });
+}
+</script>
+</body></html>
