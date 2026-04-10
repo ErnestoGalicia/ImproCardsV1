@@ -1,4 +1,4 @@
-const CACHE_NAME = 'improcards-v3';
+const CACHE_NAME = 'improcards-v4';
 
 const urlsToCache = [
   './',
