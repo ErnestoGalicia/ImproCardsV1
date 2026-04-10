@@ -1,10 +1,10 @@
 {
   "name": "ImproCards",
   "short_name": "ImproCards",
-  "start_url": "./index.html",
+  "start_url": "/ImproCardsV1/index.html",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#0f172a",
+  "background_color": "#080b38",
+  "theme_color": "#080b38",
   "orientation": "portrait",
   "icons": [
     {
